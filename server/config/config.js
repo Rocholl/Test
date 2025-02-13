@@ -9,7 +9,7 @@ const envVarsSchema = Joi.object({
     .allow('development', 'production', 'test', 'provision')
     .default('development'),
   SERVER_PORT: Joi.number().default(4040),
-  MONGOOSE_DEBUG: Joi.boolean().when('NODE_ENV', {
+  SQL_DEBUG: Joi.boolean().when('NODE_ENV', {
     is: Joi.string().equal('development'),
     then: Joi.boolean().default(true),
     otherwise: Joi.boolean().default(false),
@@ -17,8 +17,11 @@ const envVarsSchema = Joi.object({
   JWT_SECRET: Joi.string()
     .required()
     .description('JWT Secret required to sign'),
-  MONGO_HOST: Joi.string().required().description('Mongo DB host url'),
-  MONGO_PORT: Joi.number().default(27017),
+  SQL_HOST: Joi.string().required().description(' DB host url'),
+  SQL_PORT: Joi.number().default(27017),
+  SQL_DB: Joi.string().required().description(' DB name'),
+  SQL_USER: Joi.string().required().description(' DB user'),
+  SQL_PASSWORD: Joi.string().required().description(' DB password'),
 })
   .unknown()
   .required();
@@ -31,12 +34,14 @@ if (error) {
 const config = {
   env: envVars.NODE_ENV,
   port: envVars.SERVER_PORT,
-  mongooseDebug: envVars.MONGOOSE_DEBUG,
   jwtSecret: envVars.JWT_SECRET,
   frontend: envVars.MEAN_FRONTEND || 'angular',
-  mongo: {
-    host: envVars.MONGO_HOST,
-    port: envVars.MONGO_PORT,
+  sql: {
+    host: envVars.SQL_HOST,
+    port: envVars.SQL_PORT,
+    db: envVars.SQL_DB,
+    user: envVars.SQL_USER,
+    password: envVars.SQL_PASSWORD,
   },
 };
 

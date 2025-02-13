@@ -1,38 +1,31 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/sequelize');
 
-const UserSchema = new mongoose.Schema(
+const User = sequelize.define(
+  'User',
   {
     fullname: {
-      type: String,
-      required: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     email: {
-      type: String,
-      required: true,
+      type: DataTypes.STRING,
+      allowNull: false,
       unique: true,
-      // Regexp to validate emails with more strict rules as added in tests/users.js which also conforms mostly with RFC2822 guide lines
-      match: [
-        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-        'Please enter a valid email',
-      ],
     },
     hashedPassword: {
-      type: String,
-      required: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
-    createdAt: {
-      type: Date,
-      default: Date.now,
+    roles: {
+      type: DataTypes.TEXT,
+      defaultValue: '[]',
     },
-    roles: [
-      {
-        type: String,
-      },
-    ],
   },
   {
-    versionKey: false,
+    timestamps: true, // Habilita los campos `createdAt` y `updatedAt`
+    tableName: 'users', // Nombre de la tabla en la base de datos
   }
 );
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = User;

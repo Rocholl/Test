@@ -9,19 +9,25 @@ const router = express.Router();
 module.exports = router;
 
 router.post('/register', asyncHandler(register), login);
+
 router.post(
   '/login',
   passport.authenticate('local', { session: false }),
   login
 );
+
 router.get('/me', passport.authenticate('jwt', { session: false }), login);
 
 async function register(req, res, next) {
-  let user = await userCtrl.insert(req.body);
-  user = user.toObject();
-  delete user.hashedPassword;
-  req.user = user;
-  next();
+  try {
+    let user = await userCtrl.insert(req.body);
+    user = user.get({ plain: true });
+    delete user.hashedPassword;
+    req.user = user;
+    next();
+  } catch (error) {
+    next(error);
+  }
 }
 
 function login(req, res) {
